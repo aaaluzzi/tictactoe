@@ -1,48 +1,123 @@
-//tic tac toe - either between player or computer
+#include <stdio.h> 
+#include <stdbool.h>
+#include <stdlib.h>
+#include <time.h>
 
-//store board as array of chars
-//boolean for if playing against computer 
+char board[9] = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
+bool cpuGame = false;
 
-/*main method
-    welcome user and ask whether they want to play against a player or another computer
-    validate input
-    if computer, set boolean to true
+bool won(char c) {
+    int winSum = 3 * c;
+    //horizontal lines
+    for (int row = 0; row < 9; row += 3) {
+        if (board[row] + board[row + 1] + board[row + 2] == winSum) {
+            return true;
+        }
+    }
+    //vertical lines
+    for (int col = 0; col < 3; col++) {
+        if (board[col] + board[col + 3] + board[col + 6] == winSum) {
+            return true;
+        }
+    }
+    //diagonal lines
+    if (board[0] + board[4] + board[8] == winSum) {
+        return true;
+    } else if (board[2] + board[4] + board[6] == winSum) {
+        return true;
+    }
 
-    loop forever
-        player one turn
-        if won(player 1 piece)
-            player one wins
-            break
-        if tie
-            tie
-            break
-        player two turn
-        if won(player 2 piece)
-            player two wins
-            break
-*/
+    return false;
+}
 
-/*player one turn
-    prompt user to enter number 
-    validate input
-    place x on board
-*/
+bool tie() {
+    for (int i = 0; i < 9; i++) {
+        if (board[i] == ' ') {
+            return false;
+        }
+    }
+    return true;
+}
 
-/*player two turn
-    if cpu, generate random input for player 2
-    else prompt user to enter number
-        validate input
-    place o on board
-*/
+bool validPosition(int position) {
+    return position >= 1 && position <= 9 && board[position - 1] == ' ';
+}
 
-/*check board(piece)
-    loop through array and check rows and columns and diagonal
-    return boolean for win
-*/
+//TODO index from coords
+//(x - 1) + 3(y - 1)
 
-/*output board
-    loop through array and print grid with board values
-*/
+void playerOneTurn() {
+    puts("Player 1, enter a number (1-9) to place your piece: ");
+    int position;
+    scanf("%d", &position);
+    while (!validPosition(position)) {
+        puts("Invalid position, try again: ");
+        scanf("%d", &position);
+    }
+    board[position - 1] = 'X';
+}
 
+void playerTwoTurn() {
+    int position;
+    if (cpuGame) {
+        do {
+            position = rand() % 9;
+        } while (!validPosition(position));
+        puts("CPU, place your piece!");
+    } else {
+        puts("Player 2, enter a number (1-9) to place your piece: ");
+        scanf("%d", &position);
+        while (!validPosition(position)) {
+            puts("Invalid position, try again: ");
+            scanf("%d", &position);
+        }
+    }
+    board[position - 1] = 'O';
+}
+
+void printBoard() {
+    puts("+-----------+");
+    printf("| %c | %c | %c |\n", board[0], board[1], board[2]);
+    puts("+-----------+");
+    printf("| %c | %c | %c |\n", board[3], board[4], board[5]);
+    puts("+-----------+");
+    printf("| %c | %c | %c |\n", board[6], board[7], board[8]);
+    puts("+-----------+");
+}
+
+int main() {
+    srand(time(NULL));
+    puts("Welcome! Who are you playing against?\n1 = Human\n2 = CPU");
+    int option;
+    scanf("%d", &option);
+    if (option == 2) {
+        cpuGame = 1;
+    }
+    puts("Start!");
+    printBoard();
+    while (true) {
+        playerOneTurn();
+        printBoard();
+        if (won('X')) {
+            puts("Player 1 wins!");
+            break;
+        }
+        if (tie()) { //can only occur here because player 1 has last move
+            puts("Game is a tie!");
+            break;
+        }
+        playerTwoTurn();
+        printBoard();
+        if (won('O')) {
+            if (cpuGame) {
+                puts("CPU wins!");
+            } else {
+                puts("Player 2 wins!");
+            }
+            break;    
+        }
+    }
+    return 0;
+}
 
 
