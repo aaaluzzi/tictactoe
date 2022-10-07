@@ -6,8 +6,8 @@
 char board[9] = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
 bool cpuGame = false;
 
-bool won(char c) {
-    int winSum = 3 * c;
+bool won(char piece) {
+    int winSum = 3 * piece;
     //horizontal lines
     for (int row = 0; row < 9; row += 3) {
         if (board[row] + board[row + 1] + board[row + 2] == winSum) {
@@ -47,41 +47,26 @@ int coordsToPosition(int x, int y) {
     return (x - 1) + 3 * (y - 1);
 }
 
-void playerOneTurn() {
-    puts("Player 1, enter coords to place your piece: ");
-    int x;
-    int y;
+void turn(int player, char piece) {
     int posIndex;
-    scanf("%d %d", &x, &y);
-    posIndex = coordsToPosition(x, y);
-    while (!validPosition(posIndex)) {
-        puts("Invalid position, try again: ");
-        scanf("%d %d", &x, &y);
-        posIndex = coordsToPosition(x, y);
-    }
-    board[posIndex] = 'X';
-}
-
-void playerTwoTurn() {
-    int posIndex;
-    if (cpuGame) {
+    if (player == 2 && cpuGame) {
         do {
             posIndex = rand() % 9;
         } while (!validPosition(posIndex));
         puts("CPU, place your piece!");
     } else {
-        puts("Player 2, enter coords to place your piece: ");
+        printf("Player %d, enter coords to place your piece: ", player);
         int x;
         int y;
         scanf("%d %d", &x, &y);
         posIndex = coordsToPosition(x, y);
         while (!validPosition(posIndex)) {
-            puts("Invalid position, try again: ");
+            printf("Invalid position, try again: ");
             scanf("%d %d", &x, &y);
             posIndex = coordsToPosition(x, y);
         }
     }
-    board[posIndex] = 'O';
+    board[posIndex] = piece;
 }
 
 void printBoard() {
@@ -105,7 +90,7 @@ int main() {
     puts("Start!");
     printBoard();
     while (true) {
-        playerOneTurn();
+        turn(1, 'X');
         printBoard();
         if (won('X')) {
             puts("Player 1 wins!");
@@ -115,7 +100,7 @@ int main() {
             puts("Game is a tie!");
             break;
         }
-        playerTwoTurn();
+        turn(2, 'O');
         printBoard();
         if (won('O')) {
             if (cpuGame) {
