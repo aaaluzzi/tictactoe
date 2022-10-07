@@ -6,6 +6,16 @@
 char board[9] = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
 bool cpuGame = false;
 
+void printBoard() {
+    puts("+-----------+");
+    printf("| %c | %c | %c |\n", board[0], board[1], board[2]);
+    puts("+-----------+");
+    printf("| %c | %c | %c |\n", board[3], board[4], board[5]);
+    puts("+-----------+");
+    printf("| %c | %c | %c |\n", board[6], board[7], board[8]);
+    puts("+-----------+");
+}
+
 bool won(char piece) {
     int winSum = 3 * piece;
     //horizontal lines
@@ -39,44 +49,34 @@ bool tie() {
     return true;
 }
 
-bool validPosition(int posIndex) {
-    return posIndex >= 0 && posIndex <= 8 && board[posIndex] == ' ';
+bool validPosition(int boardIndex) {
+    return boardIndex >= 0 && boardIndex <= 8 && board[boardIndex] == ' ';
 }
 
-int coordsToPosition(int x, int y) {
+int coordsToBoardIndex(int x, int y) {
     return (x - 1) + 3 * (y - 1);
 }
 
 void turn(int player, char piece) {
-    int posIndex;
+    int boardIndex;
     if (player == 2 && cpuGame) {
         do {
-            posIndex = rand() % 9;
-        } while (!validPosition(posIndex));
+            boardIndex = rand() % 9;
+        } while (!validPosition(boardIndex));
         puts("CPU, place your piece!");
     } else {
         printf("Player %d, enter coords to place your piece: ", player);
         int x;
         int y;
         scanf("%d %d", &x, &y);
-        posIndex = coordsToPosition(x, y);
-        while (!validPosition(posIndex)) {
-            printf("Invalid position, try again: ");
+        boardIndex = coordsToBoardIndex(x, y);
+        while (!validPosition(boardIndex)) {
+            puts("Invalid position, try again: ");
             scanf("%d %d", &x, &y);
-            posIndex = coordsToPosition(x, y);
+            boardIndex = coordsToBoardIndex(x, y);
         }
     }
-    board[posIndex] = piece;
-}
-
-void printBoard() {
-    puts("+-----------+");
-    printf("| %c | %c | %c |\n", board[0], board[1], board[2]);
-    puts("+-----------+");
-    printf("| %c | %c | %c |\n", board[3], board[4], board[5]);
-    puts("+-----------+");
-    printf("| %c | %c | %c |\n", board[6], board[7], board[8]);
-    puts("+-----------+");
+    board[boardIndex] = piece;
 }
 
 int main() {
@@ -84,9 +84,11 @@ int main() {
     puts("Welcome! Who are you playing against?\n1 = Human\n2 = CPU");
     int option;
     scanf("%d", &option);
-    if (option == 2) {
-        cpuGame = 1;
+    while (option != 1 && option != 2) {
+        printf("Invalid input, try again: ");
+        scanf("%d", &option);
     }
+    cpuGame = option == 2;
     puts("Start!");
     printBoard();
     while (true) {
