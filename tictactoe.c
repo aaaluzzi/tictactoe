@@ -39,40 +39,49 @@ bool tie() {
     return true;
 }
 
-bool validPosition(int position) {
-    return position >= 1 && position <= 9 && board[position - 1] == ' ';
+bool validPosition(int posIndex) {
+    return posIndex >= 0 && posIndex <= 8 && board[posIndex] == ' ';
 }
 
-//TODO index from coords
-//(x - 1) + 3(y - 1)
+int coordsToPosition(int x, int y) {
+    return (x - 1) + 3 * (y - 1);
+}
 
 void playerOneTurn() {
-    puts("Player 1, enter a number (1-9) to place your piece: ");
-    int position;
-    scanf("%d", &position);
-    while (!validPosition(position)) {
+    puts("Player 1, enter coords to place your piece: ");
+    int x;
+    int y;
+    int posIndex;
+    scanf("%d %d", &x, &y);
+    posIndex = coordsToPosition(x, y);
+    while (!validPosition(posIndex)) {
         puts("Invalid position, try again: ");
-        scanf("%d", &position);
+        scanf("%d %d", &x, &y);
+        posIndex = coordsToPosition(x, y);
     }
-    board[position - 1] = 'X';
+    board[posIndex] = 'X';
 }
 
 void playerTwoTurn() {
-    int position;
+    int posIndex;
     if (cpuGame) {
         do {
-            position = rand() % 9;
-        } while (!validPosition(position));
+            posIndex = rand() % 9;
+        } while (!validPosition(posIndex));
         puts("CPU, place your piece!");
     } else {
-        puts("Player 2, enter a number (1-9) to place your piece: ");
-        scanf("%d", &position);
-        while (!validPosition(position)) {
+        puts("Player 2, enter coords to place your piece: ");
+        int x;
+        int y;
+        scanf("%d %d", &x, &y);
+        posIndex = coordsToPosition(x, y);
+        while (!validPosition(posIndex)) {
             puts("Invalid position, try again: ");
-            scanf("%d", &position);
+            scanf("%d %d", &x, &y);
+            posIndex = coordsToPosition(x, y);
         }
     }
-    board[position - 1] = 'O';
+    board[posIndex] = 'O';
 }
 
 void printBoard() {
