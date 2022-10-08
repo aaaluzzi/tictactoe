@@ -4,7 +4,7 @@
 #include <time.h>
 
 char board[9] = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
-bool cpuGame = false;
+bool cpuGame;
 
 void printBoard() {
     puts("+-----------+");
@@ -37,13 +37,7 @@ bool won(char piece) {
         }
     }
     //diagonal lines
-    if (board[0] + board[4] + board[8] == winSum) {
-        return true;
-    } else if (board[2] + board[4] + board[6] == winSum) {
-        return true;
-    }
-
-    return false;
+    return board[0] + board[4] + board[8] == winSum || board[2] + board[4] + board[6] == winSum;
 }
 
 bool tie() {
@@ -66,14 +60,13 @@ int coordsToBoardIndex(int x, int y) {
 void turn(int player, char piece) {
     int boardIndex;
     if (player == 2 && cpuGame) {
+        puts("CPU, place your piece!");
         do {
             boardIndex = rand() % 9;
         } while (!validPosition(boardIndex));
-        puts("CPU, place your piece!");
     } else {
         printf("Player %d, enter coords to place your piece: ", player);
-        int x;
-        int y;
+        int x, y;
         scanf("%d %d", &x, &y);
         boardIndex = coordsToBoardIndex(x, y);
         while (!validPosition(boardIndex)) {
@@ -103,19 +96,14 @@ void main() {
         if (won('X')) {
             puts("Player 1 wins!");
             break;
-        }
-        if (tie()) { //can only occur here because player 1 has last move
+        } else if (tie()) { //can only occur here because player 1 has last move
             puts("Game is a tie!");
             break;
         }
         turn(2, 'O');
         printBoard();
         if (won('O')) {
-            if (cpuGame) {
-                puts("CPU wins!");
-            } else {
-                puts("Player 2 wins!");
-            }
+            printf("%s wins!\n", cpuGame ? "CPU" : "Player 2");
             break;    
         }
     }
