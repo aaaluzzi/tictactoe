@@ -16,6 +16,12 @@ void printBoard() {
     puts("+-----------+");
 }
 
+void resetBoard() {
+    for (int i = 0; i < 9; i++) {
+        board[i] = ' ';
+    }
+}
+
 bool won(char piece) {
     int winSum = 3 * piece;
     //horizontal lines
@@ -79,9 +85,9 @@ void turn(int player, char piece) {
     board[boardIndex] = piece;
 }
 
-int main() {
+void main() {
     srand(time(NULL));
-    puts("Welcome! Who are you playing against?\n1 = Human\n2 = CPU");
+    puts("Let's begin a game of Tic-Tac-Toe!\nWho are you playing against?\n1 = Human\n2 = CPU");
     int option;
     scanf("%d", &option);
     while (option != 1 && option != 2) {
@@ -113,7 +119,15 @@ int main() {
             break;    
         }
     }
-    return 0;
+    char response;
+    do {
+        printf("Would you like to play again (y/n)? ");
+        scanf(" %c", &response);        
+    } while (response != 'y' && response != 'n');
+    if (response == 'y') {
+        resetBoard();
+        main();
+    }
 }
 
 
